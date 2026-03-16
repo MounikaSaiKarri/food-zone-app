@@ -1,0 +1,98 @@
+/* =============================== */
+/* ORDERS PAGE - PREMIUM DESIGN */
+/* =============================== */
+
+.orders-page {
+  max-width: 1000px;
+  margin: 0 auto;
+  padding: 40px 20px;
+}
+
+/* Title */
+.orders-title {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  text-align: center;
+  letter-spacing: 3px;
+  margin-bottom: 60px;
+  color: #111;
+}
+
+/* Empty State */
+.no-orders {
+  text-align: center;
+  font-size: 18px;
+  color: #666;
+  letter-spacing: 1px;
+}
+
+/* Container */
+.orders-container {
+  display: flex;
+  flex-direction: column;
+  gap: 35px;
+}
+
+/* Order Card */
+.order-card {
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 35px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.07);
+  transition: all 0.4s ease;
+}
+
+.order-card:hover {
+  transform: translateY(-10px);
+  box-shadow: 0 20px 55px rgba(0, 0, 0, 0.15);
+}
+
+/* Header */
+.order-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+  padding-bottom: 18px;
+  border-bottom: 1px solid #f0f0f0;
+}
+
+.order-date {
+  font-size: 15px;
+  letter-spacing: 1px;
+  color: #555;
+}
+
+.order-total {
+  font-size: 20px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  color: #000;
+}
+
+/* Items */
+.order-items {
+  list-style: none;
+  padding: 0;
+}
+
+.order-item {
+  display: flex;
+  justify-content: space-between;
+  padding: 12px 0;
+  font-size: 15px;
+  border-bottom: 1px solid #f3f3f3;
+}
+
+.order-item:last-child {
+  border-bottom: none;
+}
+
+.item-name {
+  font-weight: 500;
+}
+
+.item-details {
+  color: #444;
+  font-weight: 500;
+}
