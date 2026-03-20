@@ -13,11 +13,11 @@ import {
   faCartShopping,
   faIceCream,
   faDrumstickBite,
-  faBars
+  faBars,
+  faUserPlus   // 👈 Added for Register
 } from "@fortawesome/free-solid-svg-icons";
 
 function Navbar() {
-
   const navigate = useNavigate();
 
   const items = useSelector((state) => state.cart);
@@ -32,13 +32,10 @@ function Navbar() {
   };
 
   return (
-
     <nav className="navbar">
-
       <div className="logo">Sindhu’s Restaurant</div>
 
       <div className="nav-links">
-
         <NavLink to="/home">
           <FontAwesomeIcon icon={faHouse} /> Home
         </NavLink>
@@ -80,98 +77,68 @@ function Navbar() {
         </NavLink>
 
         {/* 👇 LOGIN / USER SECTION */}
-
         {loggedUser ? (
-
+          // Logged-in user section
           <span
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px"
-                }}
-                >
-                <FontAwesomeIcon icon={faUser} style={{ color: "#ffc107" }} />
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "8px"
+            }}
+          >
+            <FontAwesomeIcon icon={faUser} style={{ color: "#ffc107" }} />
 
-                <span
-                    style={{
-                    color: "#ffc107",
-                    fontWeight: "600",
-                    fontSize: "15px",
-                    letterSpacing: "0.5px"
-                    }}
-                >
-                    {loggedUser.fullname}
-                </span>
+            <span
+              style={{
+                color: "#ffc107",
+                fontWeight: "600",
+                fontSize: "15px",
+                letterSpacing: "0.5px"
+              }}
+            >
+              {loggedUser.fullname}
+            </span>
 
-                <button
-                    onClick={handleLogout}
-                    style={{
-                    backgroundColor: "#dc3545",
-                    border: "none",
-                    padding: "4px 10px",
-                    color: "white",
-                    borderRadius: "4px",
-                    cursor: "pointer",
-                    fontSize: "13px"
-                    }}
-                >
-                    Logout
-                </button>
-                </span>
-
+            <button
+              onClick={handleLogout}
+              style={{
+                backgroundColor: "#dc3545",
+                border: "none",
+                padding: "4px 10px",
+                color: "white",
+                borderRadius: "4px",
+                cursor: "pointer",
+                fontSize: "13px"
+              }}
+            >
+              Logout
+            </button>
+          </span>
         ) : (
+          // Not logged in → show Login + Register side by side
+          <span
+            style={{
+              display: "flex",
+              alignItems: "center",
+              gap: "12px"
+            }}
+          >
+            <NavLink
+              to="/login"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <FontAwesomeIcon icon={faUser} /> Login
+            </NavLink>
 
-          <>
-           {loggedUser ? (
-
-                <span
-                style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px"
-                }}
-                >
-
-                <FontAwesomeIcon icon={faUser} style={{color:"#ffc107"}}/>
-
-                <span
-                style={{
-                color:"#ffc107",
-                fontWeight:"600"
-                }}
-                >
-                {loggedUser.fullname}
-                </span>
-
-                <button
-                onClick={handleLogout}
-                style={{
-                backgroundColor:"#dc3545",
-                border:"none",
-                padding:"4px 10px",
-                color:"white",
-                borderRadius:"4px",
-                cursor:"pointer"
-                }}
-                >
-                Logout
-                </button>
-
-                </span>
-
-                ) : (
-
-                <NavLink to="/login" className={({isActive})=>isActive?"active-link":""}>
-                <FontAwesomeIcon icon={faUser}/> Login / Register
-                </NavLink>
-
-                )}
-          </>
-
+            <NavLink
+              to="/register"
+              className={({ isActive }) => (isActive ? "active-link" : "")}
+            >
+              <FontAwesomeIcon icon={faUserPlus} /> Register
+            </NavLink>
+          </span>
         )}
-
       </div>
-
     </nav>
   );
 }
