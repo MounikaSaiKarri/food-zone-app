@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from "react";
 import "./Veg.css";
 import { useDispatch } from "react-redux";
 import { addToCart } from "./CartSlice";
-import { toast, ToastContainer } from 'react-toastify';
+import { toast, ToastContainer } from "react-toastify";
 
 function Veg() {
+
   const vegItems = [
     {
       id: 201,
@@ -37,84 +38,213 @@ function Veg() {
     {
       id: 205,
       name: "Veg Kofta Curry",
-      imageLoc: "/image/vegkofta.jpg", // can reuse same image
+      imageLoc: "/image/vegkofta.jpg",
       price: 240,
-      description: "Soft vegetable dumplings cooked in rich and creamy tomato-based gravy."
+      description: "Soft vegetable dumplings cooked in rich creamy gravy."
     },
     {
       id: 206,
       name: "Dal Makhani",
-      imageLoc: "/image/dalmakani.jpg", // add a dal image in public/images
+      imageLoc: "/image/dalmakani.jpg",
       price: 190,
-      description: "Slow-cooked black lentils in a creamy buttery gravy with spices."
-    }, 
+      description: "Slow cooked black lentils in creamy buttery gravy."
+    },
     {
-    id: 207,
-    name: "Paneer Tikka",
-    description: "Cubes of paneer marinated in spiced yogurt and grilled to perfection.",
-    price: 249,
-    imageLoc: "/image/paneer-tikka.jpg"
-  },
-  {
-    id: 208,
-    name: "Veg Spring Rolls",
-    description: "Crispy rolls stuffed with vegetables served with sweet chili sauce.",
-    price: 199,
-    imageLoc: "/image/Vegspring.jpg"
-  },
-  {
-    id: 209,
-    name: "Hara Bhara Kabab",
-    description: "Spinach and green pea patties shallow fried with Indian spices.",
-    price: 189,
-    imageLoc: "/image/Hara-Bhara.webp"
-  },
-  {
-    id: 210,
-    name: "Crispy Corn",
-    description: "Golden fried sweet corn tossed with spices and herbs.",
-    price: 179,
-    imageLoc: "/image/crispy-corn.jpg"
-  },
-  {
-    id: 211,
-    name: "Veg Manchurian",
-    description: "Vegetable dumplings tossed in spicy Indo-Chinese sauce.",
-    price: 219,
-    imageLoc: "/image/veg-manchurian.jpg"
-  },
-  {
-    id: 212,
-    name: "Cheese Balls",
-    description: "Deep-fried crispy cheese balls served with mint dip.",
-    price: 229,
-    imageLoc: "/image/veg-cheese-balls.jpg"
-  }
+      id: 207,
+      name: "Paneer Tikka",
+      description: "Paneer cubes marinated in yogurt and grilled.",
+      price: 249,
+      imageLoc: "/image/paneer-tikka.jpg"
+    },
+    {
+      id: 208,
+      name: "Veg Spring Rolls",
+      description: "Crispy rolls stuffed with vegetables.",
+      price: 199,
+      imageLoc: "/image/Vegspring.jpg"
+    },
+    {
+      id: 209,
+      name: "Hara Bhara Kabab",
+      description: "Spinach and green pea patties shallow fried.",
+      price: 189,
+      imageLoc: "/image/Hara-Bhara.webp"
+    },
+    {
+      id: 210,
+      name: "Crispy Corn",
+      description: "Golden fried sweet corn tossed with spices.",
+      price: 179,
+      imageLoc: "/image/crispy-corn.jpg"
+    },
+    {
+      id: 211,
+      name: "Veg Manchurian",
+      description: "Vegetable dumplings in spicy Indo-Chinese sauce.",
+      price: 219,
+      imageLoc: "/image/veg-manchurian.jpg"
+    },
+    {
+      id: 212,
+      name: "Cheese Balls",
+      description: "Crispy fried cheese balls served with dip.",
+      price: 229,
+      imageLoc: "/image/veg-cheese-balls.jpg"
+    }
   ];
 
-let dispatch = useDispatch();
-<button onClick={()=>(toast('wow Ratan so easy'))}> Notify</button>
+  const dispatch = useDispatch();
+
+  const itemsPerPage = 3;
+  const totalPages = Math.ceil(vegItems.length / itemsPerPage);
+
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+
+  const currentItems = vegItems.slice(indexOfFirst, indexOfLast);
+
+  const handlePrev = () => {
+    if (currentPage > 1) setCurrentPage(currentPage - 1);
+  };
+
+  const handleNext = () => {
+    if (currentPage < totalPages) setCurrentPage(currentPage + 1);
+  };
 
   return (
-    <>
-    <ToastContainer position="top-right" autoClose={2000} />
-      <h1 className="page-title">Our Delicious Veg Menu 🌱</h1>
+    <div className="container">
 
-      <div className="card-container">
-        {vegItems.map((vegItem) => (
+      <ToastContainer position="top-right" autoClose={2000} />
+      <br/>
+      
+
+      <h1 className="page-title">🌱 Signature Vegetarian Delights</h1>
+      <br/>
+      <br/>
+
+      <div className="card-row">
+
+        {currentItems.map((vegItem) => (
+
           <div className="card" key={vegItem.id}>
+
             <img src={vegItem.imageLoc} alt={vegItem.name} />
+
             <div className="card-body">
+
               <h3>{vegItem.name}</h3>
-              <p className="price">₹{vegItem.price}</p>
-              <p className="quantity">{vegItem.quantity}</p>
+
               <p className="description">{vegItem.description}</p>
-              <button onClick={()=>{(dispatch(addToCart(vegItem))); toast.success("product "+ vegItem.name +" added to cart successfully");}} className="order-btn">Add To Cart</button>
+
+              <h4 className="price">
+                {vegItem.price.toLocaleString("en-IN", {
+                  style: "currency",
+                  currency: "INR"
+                })}
+              </h4>
+
+              <button
+                className="order-btn"
+                onClick={() => {
+                  dispatch(addToCart(vegItem));
+                  toast.success("Product " + vegItem.name + " added to cart");
+                }}
+              >
+                Add To Cart
+              </button>
+
             </div>
+
           </div>
+
         ))}
+
       </div>
-    </>
+
+
+      {/* Pagination */}
+
+      <div
+        style={{
+          marginTop: "35px",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center"
+        }}
+      >
+
+        {/* Previous Arrow */}
+
+        <button
+          onClick={handlePrev}
+          disabled={currentPage === 1}
+          style={{
+            padding: "8px 14px",
+            border: "none",
+            borderRadius: "8px",
+            background: "linear-gradient(135deg,#ff7a18,#ff5722)",
+            color: "white",
+            fontSize: "16px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            marginRight: "15px",
+            boxShadow: "0 3px 8px rgba(0,0,0,0.15)"
+          }}
+        >
+          ←
+        </button>
+
+
+        {/* Page Numbers */}
+
+        {Array.from({ length: totalPages }, (_, index) => (
+
+          <button
+            key={index}
+            onClick={() => setCurrentPage(index + 1)}
+            style={{
+              margin: "0 6px",
+              padding: "7px 13px",
+              borderRadius: "6px",
+              border: "none",
+              backgroundColor:
+                currentPage === index + 1 ? "#ff5722" : "#eee",
+              color: currentPage === index + 1 ? "white" : "#333",
+              cursor: "pointer"
+            }}
+          >
+            {index + 1}
+          </button>
+
+        ))}
+
+
+        {/* Next Arrow */}
+
+        <button
+          onClick={handleNext}
+          disabled={currentPage === totalPages}
+          style={{
+            padding: "8px 14px",
+            border: "none",
+            borderRadius: "8px",
+            background: "linear-gradient(135deg,#ff7a18,#ff5722)",
+            color: "white",
+            fontSize: "16px",
+            fontWeight: "bold",
+            cursor: "pointer",
+            marginLeft: "15px",
+            boxShadow: "0 3px 8px rgba(0,0,0,0.15)"
+          }}
+        >
+          →
+        </button>
+
+      </div>
+
+    </div>
   );
 }
 

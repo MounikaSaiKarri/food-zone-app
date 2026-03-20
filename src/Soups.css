@@ -1,70 +1,55 @@
 /* =======================
-   Reset Body
+   Premium Page Title
    ======================= */
-body {
-  margin: 0;
-  padding: 0;
-  font-family: Arial, sans-serif;
-  background-color: #f4f6f8;
+
+.menu-title{
+  font-size:36px;
+  font-weight:700;
+  color:#2c3e50;
+  letter-spacing:1px;
 }
 
 /* =======================
-   Container & Page
+   Section Headings
    ======================= */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;              /* ✅ Centers container */
-  padding: 40px 20px;          /* Balanced spacing */
-  text-align: center;          /* Centers headings */
+
+.veg-heading{
+  color:#2e7d32;
+  font-weight:600;
+}
+
+.nonveg-heading{
+  color:#c62828;
+  font-weight:600;
 }
 
 /* =======================
-   Headings
+   Pagination
    ======================= */
-h1 {
-  margin-bottom: 40px;
-  font-size: 32px;
-  color: #222;
+
+.pagination{
+  margin-top:20px;
+  display:flex;
+  justify-content:center;
+  gap:10px;
 }
 
-h2 {
-  margin-top: 40px;
-  margin-bottom: 20px;
-  font-size: 24px;
-  color: #ff5722;
+.pagination button{
+  padding:6px 12px;
+  border:none;
+  border-radius:6px;
+  background:#ddd;
+  cursor:pointer;
+  font-weight:600;
+  transition:0.3s;
 }
 
-/* =======================
-   Card Row (CENTERED)
-   ======================= */
-.card-row {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;     /* ✅ Centers cards */
-  gap: 25px;
+.pagination button:hover{
+  background:#ff5722;
+  color:white;
 }
 
-/* =======================
-   Card Styles
-   ====================
-
-/* =======================
-   Order Button
-   ======================= */
-.order-btn {
-  margin-top: 10px;
-  padding: 8px 15px;
-  border: none;
-  border-radius: 6px;
-  background-color: #ff5722; /* reddish-orange */
-  color: white;
-  cursor: pointer;
-  font-weight: 500;
-  transition: 0.3s ease;
+.active-page{
+  background:#ff5722 !important;
+  color:white;
 }
-
-.order-btn:hover {
-  background-color: #e64a19;
-}
-
-

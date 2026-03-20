@@ -25,27 +25,39 @@ function Login() {
 
     const users = JSON.parse(localStorage.getItem("users")) || [];
 
-    const validUser = users.find(
-      (user) =>
-        user.email === loginData.email &&
-        user.password === loginData.password
-    );
+  // check if user exists
+  const existingUser = users.find(
+  user => user.email === loginData.email
+);
 
-    if (validUser) {
+if(!existingUser){
+  alert("You are not registered. Please register first.");
+  navigate("/register");
+  return;
+}
 
-      localStorage.setItem("loggedUser", JSON.stringify(validUser));
+  const validUser = users.find(
+    (user) =>
+      user.email === loginData.email &&
+      user.password === loginData.password
+  );
 
-      alert(`Welcome ${validUser.fullname} 👋`);
+  if (validUser) {
 
-      reset();
+    localStorage.setItem("loggedUser", JSON.stringify(validUser));
 
-      navigate("/home");
+    alert(`Welcome ${validUser.fullname} 👋`);
 
-    } else {
+    reset();
 
-      alert("Invalid Email or Password ❌");
+    navigate("/home");
 
-    }
+  } else {
+
+    alert("Invalid Password ❌");
+
+  };
+
   };
 
   return (

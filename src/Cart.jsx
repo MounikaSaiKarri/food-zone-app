@@ -60,24 +60,28 @@ function Cart() {
       return;
     }
 
-    const orderId = generateOrderId();
+  
 
-    const orderData = {
-      orderId,
-      date: new Date().toISOString(),
-      items: cartItems.map((item) => ({
+    const templateParams = {
+      order_id : generateOrderId,
+
+      orders: cartItems.map((item) => ({
         name: item.name,
         price: item.price * item.quantity,
         units: item.quantity,
         image: item.imageLoc,
       })),
-      totalAmount: finalAmount.toFixed(2),
+      cost: { 
+        shipping : 0.0,
+        tax : 0.0,
+        total: finalAmount.toFixed(2)
+      },
       email: customerEmail,
     };
 
     // Store in localStorage under loggedUser
     if (!loggedUser.orders) loggedUser.orders = [];
-    loggedUser.orders.push(orderData);
+    loggedUser.orders.push(templateParams);
     localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
 
     // Send email
@@ -85,21 +89,16 @@ function Cart() {
       .send(
         "service_51t75ub",
         "template_yesfx9a",
-        orderData,
+        templateParams,
         "EQ7h92Oh4-oLx3dIw"
       )
-      .then((result) => {
-        console.log("Email Sent:", result);
-        alert(`Order ${orderId} placed successfully!`);
-      })
-      .catch((error) => {
-        console.error("Email Failed:", error);
-        alert("Email failed");
-      });
+      .then(() => alert(`✨ Email sent successfully!`))
+      .catch(() => toast.error("Email failed"));
+
 
     // Navigate to checkout page
     navigate("/checkout", {
-      state: { cartItems, finalAmount, customerEmail, orderId },
+      state: { cartItems, finalAmount, customerEmail },
     });
 
     // Clear cart after order

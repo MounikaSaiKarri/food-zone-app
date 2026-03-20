@@ -30,9 +30,8 @@ const handlePayment = () => {
   };
 
   // Confirmation popup
-  const confirmMsg = `Your Order ${orderId} is about to be placed!\n\nTotal Amount: ₹${finalAmount.toFixed(
-    2
-  )}\nEmail: ${customerEmail}\n\nDo you want to proceed?`;
+  const confirmMsg = `Your Order ${orderId} is about to be placed!\n\nTotal Amount: ₹${finalAmount.toFixed(2)}
+  \nEmail: ${customerEmail}\n\nDo you want to proceed?`;
 
   const confirmed = window.confirm(confirmMsg);
 

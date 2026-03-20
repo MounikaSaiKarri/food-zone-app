@@ -10,6 +10,7 @@ import Login from "./Login";
 import Cart from "./Cart";
 import NotFound from "./NotFound";
 import Profile from "./Profile";
+import Navbar from "./Navbar";
 // import BlogPost from "./BlogPost";
 
 import { BrowserRouter, NavLink, Route, Routes, Navigate, useNavigate } from "react-router-dom";
@@ -45,82 +46,45 @@ function App() {
     0
   );
 
+  
+const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+
+const handleLogout = () => {
+  localStorage.removeItem("loggedUser");
+  alert("Logged out successfully");
+  window.location.href = "/login";
+};
+
   return (
     <BrowserRouter>
-      {/* NAVBAR */}
-      <nav className="navbar">
-        <div className="logo">Sindhu’s Restaurant</div>
 
-        <div className="nav-links">
-          <NavLink to="/home" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faHouse} /> Home
-          </NavLink>
+<Navbar/>
 
-          <NavLink to="/soups" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faBowlFood} /> Soups
-          </NavLink>
+<div className="page-content">
+<Routes>
 
-          <NavLink to="/veg" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faCarrot} /> Veg
-          </NavLink>
+<Route path="/" element={<Navigate to="/home" />} />
+<Route path="/home" element={<Home />} />
+<Route path="/soups" element={<Soups />} />
+<Route path="/veg" element={<Veg />} />
+<Route path="/nonveg" element={<NonVeg />} />
+<Route path="/dessert" element={<Desserts />} />
+<Route path="/mocktails" element={<Mocktails />} />
+<Route path="/aboutus" element={<AboutUs />} />
+<Route path="/cart" element={<Cart />} />
+<Route path="/profile" element={<Profile />} />
+<Route path="/orders" element={<Orders />} />
+<Route path="/login" element={<Login/>}/>
+<Route path="/register" element={<Register/>}/>
+<Route path="/checkout" element={<Checkout/>}/>
+<Route path="/contactus" element={<ContactUs/>}/>
+<Route path="/navbar" element = {<Navbar/>} />
+<Route path="*" element={<NotFound />} />
 
-          <NavLink to="/nonveg" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faDrumstickBite} /> Non-Veg
-          </NavLink>
+</Routes>
+</div>
 
-          <NavLink to="/dessert" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faIceCream} /> Desserts
-          </NavLink>
-
-          <NavLink to="/mocktails" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faMartiniGlassCitrus} /> Mocktails
-          </NavLink>
-
-          <NavLink to="/cart" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faCartShopping} /> Cart ({totalQuantity})
-          </NavLink>
-
-          <NavLink to="/orders" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faBars} /> Orders
-          </NavLink>
-
-           <NavLink to="/register" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faUser} /> Register
-          </NavLink>
-
-            <NavLink to="/aboutus" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faUsers} /> About Us
-          </NavLink>
-
-          <NavLink to="/contactus" className={({ isActive }) => isActive ? "active-link" : ""}>
-            <FontAwesomeIcon icon={faPhone} /> Contact Us
-          </NavLink>
-        </div>
-      </nav>
-
-      {/* PAGE CONTENT */}
-      <div className="page-content">
-        <Routes>
-          <Route path="/" element={<Navigate to="/home" />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/soups" element={<Soups />} />
-          <Route path="/veg" element={<Veg />} />
-          <Route path="/nonveg" element={<NonVeg />} />
-          <Route path="/dessert" element={<Desserts />} />
-          <Route path="/mocktails" element={<Mocktails />} />
-          <Route path="/aboutus" element={<AboutUs />} />
-          <Route path="/cart" element={<Cart />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="*" element={<NotFound />} />
-          <Route path="/orders" element={<Orders />} />
-         <Route path="/login" element={<Login/>}/>
-          <Route path="/register" element={<Register/>}/>
-          <Route path="/checkout" element={<Checkout/>}/>
-          <Route path="/contactus" element={<ContactUs/>}/>
-
-        </Routes>
-      </div>
-    </BrowserRouter>
+</BrowserRouter>
   );
 }
 
