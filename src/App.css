@@ -90,3 +90,36 @@ body {
   padding: 140px 40px 40px 40px; /* space below floating navbar */
 }
 
+.user-section {
+  display: flex;
+  flex-direction: column; /* 👈 stacks vertically */
+  align-items: flex-start; /* aligns to left inside navbar */
+  gap: 6px; /* small space between Welcome and Logout */
+}
+
+.user-section .welcome-text {
+  color: #343a40;
+  font-weight: 600;
+  font-size: 14px;
+  max-width: 160px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.user-section .logout-btn {
+  background-color: #dc3545;
+  border: none;
+  padding: 6px 14px;
+  color: white;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  transition: background-color 0.3s ease;
+}
+
+.user-section .logout-btn:hover {
+  background-color: #c82333;
+}
+

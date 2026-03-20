@@ -1,7 +1,9 @@
 import React, { useEffect } from "react";
 import { useForm } from "react-hook-form";
-import { useNavigate, NavLink } from "react-router-dom";   // 👈 Added NavLink
+import { useNavigate, NavLink } from "react-router-dom";
 import "bootstrap/dist/css/bootstrap.min.css";
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";   // 👈 Make sure this is imported
 import "./Login.css";
 
 function Login() {
@@ -23,7 +25,10 @@ function Login() {
     const existingUser = users.find(user => user.email === loginData.email);
 
     if (!existingUser) {
-      alert("You are not registered. Please register first.");
+      toast.info("You are not registered. Please register first.", {
+        position: "top-center",
+        autoClose: 3000,
+      });
       navigate("/register");
       return;
     }
@@ -36,17 +41,26 @@ function Login() {
 
     if (validUser) {
       localStorage.setItem("loggedUser", JSON.stringify(validUser));
-      alert(`Welcome ${validUser.fullname} 👋`);
       reset();
+      toast.success(`Welcome ${validUser.fullname} 👋`, {
+        position: "top-center",
+        autoClose: 3000,
+      });
       navigate("/home");
     } else {
-      alert("Invalid Password ❌");
+      toast.error("Invalid Password ❌", {
+        position: "top-center",
+        autoClose: 3000,
+      });
     }
   };
 
   return (
     <div className="login-container">
       <div className="login-box">
+        {/* 👇 Toast container must be inside your component tree */}
+        <ToastContainer position="top-center" autoClose={3000} />
+        
         <h2 className="login-title">Login</h2>
 
         <form onSubmit={handleSubmit(loginLogics)}>

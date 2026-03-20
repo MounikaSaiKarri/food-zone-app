@@ -1,6 +1,7 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import "./App.css";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCarrot,
@@ -27,7 +28,7 @@ function Navbar() {
 
   const handleLogout = () => {
     localStorage.removeItem("loggedUser");
-    alert("Logged out successfully");
+    toast.success("Logged out successfully"); // 👈 toast instead of alert
     navigate("/login");
   };
 
@@ -78,49 +79,17 @@ function Navbar() {
 
         {/* 👇 LOGIN / USER SECTION */}
         {loggedUser ? (
-          // Logged-in user section
-          <span
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: "8px"
-            }}
-          >
-            <FontAwesomeIcon icon={faUser} style={{ color: "#ffc107" }} />
-
-            <span
-              style={{
-                color: "#ffc107",
-                fontWeight: "600",
-                fontSize: "15px",
-                letterSpacing: "0.5px"
-              }}
-            >
-              {loggedUser.fullname}
-            </span>
-
-            <button
-              onClick={handleLogout}
-              style={{
-                backgroundColor: "#dc3545",
-                border: "none",
-                padding: "4px 10px",
-                color: "white",
-                borderRadius: "4px",
-                cursor: "pointer",
-                fontSize: "13px"
-              }}
-            >
-              Logout
-            </button>
+          <span className="user-section">
+            <span className="welcome-text">Welcome, {loggedUser.fullname}</span>
+            <button className="logout-btn" onClick={handleLogout}>Logout</button>
           </span>
         ) : (
-          // Not logged in → show Login + Register side by side
           <span
             style={{
               display: "flex",
               alignItems: "center",
-              gap: "12px"
+              gap: "10px",
+              maxHeight: "40px"
             }}
           >
             <NavLink

@@ -15,27 +15,13 @@ import Navbar from "./Navbar";
 
 import { BrowserRouter, NavLink, Route, Routes, Navigate, useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import {
-  faCarrot,
-  faHouse,
-  faBowlFood,
-  faMartiniGlassCitrus,
-  faUsers,
-  faUser,
-  faPhone,
-  faCartShopping,
-  faIceCream,
-  faDrumstickBite,
-  faBars 
-} from "@fortawesome/free-solid-svg-icons";
-
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import Orders from "./Orders";
 import Register from "./Register";
 import Checkout from "./Checkout";
 import ContactUs from "./ContactUs";
+import { ToastContainer, toast } from "react-toastify";
 
 
 function App() {
@@ -51,15 +37,15 @@ const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
 
 const handleLogout = () => {
   localStorage.removeItem("loggedUser");
-  alert("Logged out successfully");
-  window.location.href = "/login";
+  toast.success("Logged out successfully"); // 👈 toast instead of alert
+    window.location.href = "/login";
 };
 
   return (
     <BrowserRouter>
 
 <Navbar/>
-
+      <ToastContainer position="top-right" autoClose={3000} /> {/* 👈 add this */}
 <div className="page-content">
 <Routes>
 
