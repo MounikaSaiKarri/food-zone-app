@@ -263,3 +263,58 @@ background:#eee;
 margin-top:20px;
 text-align:center;
 }
+
+/* ============================= */
+/* CART ACTION BUTTONS - Premium */
+/* ============================= */
+
+.cart-btns {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+}
+
+/* Base style for all buttons */
+.cart-btns button {
+  padding: 8px 14px;
+  border: none;
+  border-radius: 8px;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.12);
+}
+
+/* + Increase Button */
+.cart-btns button:first-child {
+  background: linear-gradient(135deg, #4caf50, #2e7d32); /* green gradient */
+  color: #fff;
+}
+.cart-btns button:first-child:hover {
+  background: linear-gradient(135deg, #43a047, #1b5e20);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+/* - Decrease Button */
+.cart-btns button:nth-child(2) {
+  background: linear-gradient(135deg, #ffb74d, #f57c00); /* orange gradient */
+  color: #fff;
+}
+.cart-btns button:nth-child(2):hover {
+  background: linear-gradient(135deg, #fb8c00, #e65100);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.25);
+}
+
+/* Remove Button */
+.cart-btns button:last-child {
+  background: linear-gradient(135deg, #e57373, #d32f2f); /* elegant red gradient */
+  color: #fff;
+}
+.cart-btns button:last-child:hover {
+  background: linear-gradient(135deg, #f44336, #b71c1c);
+  transform: translateY(-3px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+}

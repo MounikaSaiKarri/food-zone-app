@@ -1,8 +1,8 @@
-import React, { useState } from "react";
+import React, { useState , useEffect } from "react";
 import "./NonVeg.css";   // reuse same styling
 import { useDispatch } from "react-redux";
 import { addToCart } from "./CartSlice";
-import { toast, ToastContainer } from "react-toastify";
+import { toast } from "react-toastify";
 
 function Soups() {
 
@@ -116,153 +116,108 @@ imageLoc:"/image/veg.jpg"
 
 ];
 
-const dispatch = useDispatch();
+ const dispatch = useDispatch();
+  const itemsPerPage = 6;
+  const totalPages = Math.ceil(soupItems.length / itemsPerPage);
 
-const itemPerPage = 3;
-const totalPages = Math.ceil(soupItems.length / itemPerPage);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [favorites, setFavorites] = useState([]);
+  const [filter, setFilter] = useState("ALL");
 
-const [currentPage,setCurrentPage] = useState(1);
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (loggedUser && loggedUser.favorites) setFavorites(loggedUser.favorites);
+  }, []);
 
-const indexOfLastItem = currentPage * itemPerPage;
-const indexOfFirstItem = indexOfLastItem - itemPerPage;
+  const indexOfLast = currentPage * itemsPerPage;
+  const indexOfFirst = indexOfLast - itemsPerPage;
+  let currentItems = soupItems.slice(indexOfFirst, indexOfLast);
 
-const currentItems = soupItems.slice(indexOfFirstItem,indexOfLastItem);
+  if (filter === "LOW") currentItems = currentItems.filter(item => item.price < 200);
+  else if (filter === "HIGH") currentItems = currentItems.filter(item => item.price >= 200);
 
-const handlePrev = () => {
-if(currentPage > 1) setCurrentPage(currentPage - 1);
-};
+  const handleFavorite = (itemName) => {
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (!loggedUser) {
+      toast.warning("⚠️ Please login to add favorites");
+      return;
+    }
+    const updatedFavorites = [...favorites, itemName];
+    setFavorites(updatedFavorites);
+    loggedUser.favorites = updatedFavorites;
+    localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
+    toast.success(`${itemName} added to favorites`);
+  };
 
-const handleNext = () => {
-if(currentPage < totalPages) setCurrentPage(currentPage + 1);
-};
+  return (
+    <div className="container">
 
-return(
-
-<div className="container">
-
-<ToastContainer position="top-right" autoClose={1000} />
-<br/>
-
-
-<h1 className="page-title">🍲 Signature Soup Collection</h1>
-
-<br/>
-<br/>
-
-<div className="card-row">
-
-{currentItems.map((item)=>(
-
-<div className="card" key={item.id}>
-
-<img src={item.imageLoc} alt={item.name} className="card-img"/>
-
-<div className="card-body">
-
-<h3>{item.name}</h3>
-
-<p>{item.description}</p>
-
-<h4 className="price">
-{item.price.toLocaleString("en-IN",{style:"currency",currency:"INR"})}
-</h4>
-
-<button
-className="order-btn"
-onClick={()=>{
-dispatch(addToCart(item));
-toast.success("Product "+item.name+" added to cart");
-}}
->
-
-Add To Cart
-
-</button>
-
+      <div className="filter-buttons">
+  <button
+    className={filter === "ALL" ? "active" : ""}
+    onClick={() => setFilter("ALL")}
+  >
+    All
+  </button>
+  <button
+    className={filter === "LOW" ? "active" : ""}
+    onClick={() => setFilter("LOW")}
+  >
+    Below ₹200
+  </button>
+  <button
+    className={filter === "HIGH" ? "active" : ""}
+    onClick={() => setFilter("HIGH")}
+  >
+    ₹200 & Above
+  </button>
 </div>
 
-</div>
 
-))}
+      <div className="card-row">
+        {currentItems.map((item) => (
+          <div className="card" key={item.id}>
+            <img src={item.imageLoc} alt={item.name} />
+            <div className="card-body">
+              <h3>{item.name}</h3>
+              <p>{item.description}</p>
+              <h4 className="price">₹{item.price}</h4>
 
-</div>
+              <button className="order-btn" onClick={() => {dispatch(addToCart(item)); toast.success(`${item.name} added to cart`);}}>
+                Add To Cart
+              </button>
 
-{/* Pagination */}
+              <button
+                style={{
+                  marginTop: "8px",
+                  padding: "6px 12px",
+                  border: "1px solid #ff5722",
+                  borderRadius: "6px",
+                  background: favorites.includes(item.name) ? "#ff5722" : "#fff",
+                  color: favorites.includes(item.name) ? "#fff" : "#333",
+                  cursor: "pointer"
+                }}
+                onClick={() => handleFavorite(item.name)}
+              >
+                {favorites.includes(item.name) ? "★ Favorited" : "☆ Add Favorite"}
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
 
-<div
-  style={{
-    marginTop: "30px",
-    display: "flex",
-    justifyContent: "center",
-    alignItems: "center"
-  }}
->
-
-<button
-  onClick={handlePrev}
-  disabled={currentPage === 1}
-  style={{
-    padding: "8px 14px",
-    border: "none",
-    borderRadius: "8px",
-    background: "linear-gradient(135deg,#ff7a18,#ff5722)",
-    color: "white",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
-    marginRight: "15px"   // 👈 space after arrow
-  }}
->
-  ←
-</button>
-
-
-{Array.from({length:totalPages},(_,index)=>(
-
-<button
-key={index}
-onClick={()=>setCurrentPage(index+1)}
-style={{
-margin:"0 6px",
-backgroundColor: currentPage===index+1 ? "#ff5722" : "#eee",
-color: currentPage===index+1 ? "white" : "black",
-padding:"6px 12px",
-border:"none",
-borderRadius:"6px",
-cursor:"pointer"
-}}
->
-{index+1}
-</button>
-
-))}
-
-<button
-  onClick={handleNext}
-  disabled={currentPage === totalPages}
-  style={{
-    padding: "8px 14px",
-    border: "none",
-    borderRadius: "8px",
-    background: "linear-gradient(135deg,#ff7a18,#ff5722)",
-    color: "white",
-    fontSize: "16px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    boxShadow: "0 3px 8px rgba(0,0,0,0.15)",
-    marginLeft: "15px"   // 👈 space before arrow
-  }}
->
-  →
-</button>
-
-</div>
-
-</div>
-
-);
-
+      <div style={{ marginTop: "30px", textAlign: "center" }}>
+        <button onClick={() => setCurrentPage(currentPage - 1)} disabled={currentPage === 1}>←</button>
+        {Array.from({ length: totalPages }, (_, index) => (
+          <button key={index} onClick={() => setCurrentPage(index + 1)}
+            style={{ margin: "0 6px", backgroundColor: currentPage === index + 1 ? "#ff5722" : "#eee", color: currentPage === index + 1 ? "white" : "black", padding: "6px 12px", border: "none", borderRadius: "6px", cursor: "pointer" }}>
+            {index + 1}
+          </button>
+        ))}
+        <button onClick={() => setCurrentPage(currentPage + 1)} disabled={currentPage === totalPages}>→</button>
+      </div>
+    </div>
+  );
 }
 
 export default Soups;

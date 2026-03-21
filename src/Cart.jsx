@@ -3,15 +3,14 @@ import { useDispatch, useSelector } from "react-redux";
 import { increaseQuant, decreaseQuant, removeCart, clearCart } from "./CartSlice";
 import { applyCoupon, resetCoupon } from "./couponSlice";
 import emailjs from "@emailjs/browser";
-import { toast, ToastContainer } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
 import "./Cart.css";
 import { useNavigate } from "react-router-dom";
 
 function Cart() {
   const dispatch = useDispatch();
   const cartItems = useSelector((state) => state.cart);
-  const { code, discount, applied } = useSelector((state) => state.coupon);
+  const { discount, applied } = useSelector((state) => state.coupon);
 
   const [discountPer, setDiscountPer] = useState(0);
   const [input, setInput] = useState("");
@@ -28,25 +27,29 @@ function Cart() {
   const couponDiscount = (discount / 100) * totalAmount;
   const finalAmount = totalAmount - discountAmount - couponDiscount;
 
-  // Generate unique order ID
   const generateOrderId = () => {
-    const timestamp = Date.now(); // milliseconds since 1970
-    const random = Math.floor(Math.random() * 1000); // random 0-999
+    const timestamp = Date.now();
+    const random = Math.floor(Math.random() * 1000);
     return `ORD-${timestamp}-${random}`;
   };
 
-  /* COUPON RESULT TOAST */
+  useEffect(() => {
+    const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+    if (loggedUser) {
+      setCustomerEmail(loggedUser.email); // auto-fill email if logged in
+    }
+  }, []);
+
   useEffect(() => {
     if (input) {
       if (applied) {
-        toast.success("🎉 Coupon applied hurray");
+        toast.success("🎉 Coupon applied!");
       } else {
         toast.error("Invalid coupon");
       }
     }
   }, [applied]);
 
-  /* CHECKOUT */
   const handleCheckout = () => {
     if (!customerEmail) {
       toast.warning("⚠️ Please enter your email first");
@@ -55,57 +58,49 @@ function Cart() {
 
     const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
     if (!loggedUser) {
-      alert("Please Login to Continue");
+      toast.warning("⚠️ Please login to continue");
       navigate("/login");
       return;
     }
 
-  
+    const orderId = generateOrderId();
 
     const templateParams = {
-      order_id : generateOrderId,
-
-      orders: cartItems.map((item) => ({
-        name: item.name,
-        price: item.price * item.quantity,
-        units: item.quantity,
-        image: item.imageLoc,
-      })),
-      cost: { 
-        shipping : 0.0,
-        tax : 0.0,
+      order_id: orderId,
+      orders: cartItems.map(item => `${item.name} x${item.quantity} = ₹${item.price * item.quantity}`).join(", "),
+      cost: {
+        shipping: 0.0,
+        tax: 0.0,
         total: finalAmount.toFixed(2)
       },
       email: customerEmail,
     };
 
-    // Store in localStorage under loggedUser
+    // Save order in localStorage
     if (!loggedUser.orders) loggedUser.orders = [];
-    loggedUser.orders.push(templateParams);
+    loggedUser.orders.push({
+      id: orderId,
+      date: new Date().toLocaleString(),
+      items: cartItems,
+      totalPrice: finalAmount.toFixed(2),
+      email: customerEmail
+    });
     localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
 
     // Send email
     emailjs
-      .send(
-        "service_51t75ub",
-        "template_yesfx9a",
-        templateParams,
-        "EQ7h92Oh4-oLx3dIw"
-      )
-      .then(() => alert(`✨ Email sent successfully!`))
+      .send("service_51t75ub", "template_yesfx9a", templateParams, "EQ7h92Oh4-oLx3dIw")
+      .then(() => toast.success("✨ Email sent successfully!"))
       .catch(() => toast.error("Email failed"));
-
 
     // Navigate to checkout page
     navigate("/checkout", {
-      state: { cartItems, finalAmount, customerEmail },
+      state: { cartItems, finalAmount, customerEmail, orderId },
     });
 
-    // Clear cart after order
     dispatch(clearCart());
   };
 
-  /* APPLY COUPON */
   const handleApplyCoupon = () => {
     if (!input.trim()) return;
     const couponCode = input.trim().toUpperCase();
@@ -115,17 +110,16 @@ function Cart() {
 
   return (
     <div className="cart-container">
-      <ToastContainer position="top-right" autoClose={2000} />
       <h1 className="cart-title">🛒 Your Cart</h1>
 
-      {/* CLEAR CART */}
       {cartItems.length > 0 && (
         <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
           🗑 Clear Cart
         </button>
       )}
 
-      {/* EMPTY CART */}
+      <br/>
+
       {cartItems.length === 0 && (
         <div className="empty-cart">
           <h2>Your Cart is Empty</h2>
@@ -133,7 +127,6 @@ function Cart() {
         </div>
       )}
 
-      {/* CART ITEMS */}
       {cartItems.length > 0 &&
         cartItems.map((item, index) => (
           <div key={item.id + "-" + index} className="cart-item">
@@ -143,36 +136,20 @@ function Cart() {
               <p>₹{item.price}</p>
               <p>Qty: {item.quantity}</p>
             </div>
-            <div className="cart-btns">
-              <button
-                onClick={() => {
-                  dispatch(increaseQuant(item));
-                  toast.success(`➕ ${item.name} quantity increased`);
-                }}
-              >
-                +
-              </button>
-              <button
-                onClick={() => {
-                  dispatch(decreaseQuant(item));
-                  toast.info(`➖ ${item.name} quantity decreased`);
-                }}
-              >
-                -
-              </button>
-              <button
-                onClick={() => {
-                  dispatch(removeCart(item));
-                  toast.error(`🗑️ ${item.name} removed from cart`);
-                }}
-              >
-                Remove
-              </button>
-            </div>
+           <div className="cart-btns">
+  {/* Increase Quantity */}
+  <button onClick={() => dispatch(increaseQuant(item))}>+</button>
+
+  {/* Decrease Quantity */}
+  <button onClick={() => dispatch(decreaseQuant(item))}>-</button>
+
+  {/* Remove Item */}
+  <button onClick={() => dispatch(removeCart(item))}>Remove</button>
+</div>
+
           </div>
         ))}
 
-      {/* SUMMARY */}
       {cartItems.length > 0 && (
         <>
           <div className="total-box">
@@ -199,7 +176,6 @@ function Cart() {
             </div>
           </div>
 
-          {/* DISCOUNT BUTTONS */}
           {totalAmount > 1000 && (
             <div className="discount-box">
               <h3>Special Discount</h3>
@@ -210,7 +186,6 @@ function Cart() {
             </div>
           )}
 
-          {/* COUPON */}
           {totalAmount > 1000 && (
             <div className="coupon-box">
               <input
@@ -224,17 +199,17 @@ function Cart() {
             </div>
           )}
 
-          {/* EMAIL */}
-          <div className="email-box">
-            <label>Enter email for order confirmation</label>
-            <input
-              type="email"
-              value={customerEmail}
-              onChange={(e) => setCustomerEmail(e.target.value)}
-            />
-          </div>
+          {!customerEmail && (
+            <div className="email-box">
+              <label>Enter email for order confirmation</label>
+              <input
+                type="email"
+                value={customerEmail}
+                onChange={(e) => setCustomerEmail(e.target.value)}
+              />
+            </div>
+          )}
 
-          {/* CHECKOUT */}
           <button onClick={handleCheckout} className="checkout-btn">
             Proceed to Pay
           </button>

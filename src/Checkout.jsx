@@ -5,10 +5,10 @@ import { useDispatch } from "react-redux";
 import { clearCart } from "./CartSlice";
 import { addOrder } from "./orderSlice";
 import "./Checkout.css";
-
-// ✅ Toastify imports
-import { ToastContainer, toast } from "react-toastify";
-import "react-toastify/dist/ReactToastify.css";
+import { toast } from "react-toastify";
+import emailjs from "emailjs-com"; // ✅ import at the top
+import { confirmAlert } from "react-confirm-alert";
+import "react-confirm-alert/src/react-confirm-alert.css";
 
 function Checkout() {
   const location = useLocation();
@@ -22,42 +22,70 @@ function Checkout() {
     return <h2>No order found!</h2>;
   }
 
-  const handlePayment = () => {
-    // Prepare purchase details
-    const purchaseDetails = {
-      date: new Date().toLocaleString(),
-      items: [...cartItems],
-      totalPrice: finalAmount.toFixed(2),
-      orderId: orderId,
-      email: customerEmail,
-    };
 
-    // Info toast before placing order
-    toast.info(`🛒 Your Order ${orderId} is about to be placed!`, {
-      position: "top-center",
-      autoClose: 3000,
-    });
+const handlePayment = () => {
+  confirmAlert({
+    title: "Confirm Your Order",
+    message: `Are you sure you want to place order ${orderId}?`,
+    buttons: [
+      {
+        label: "Yes",
+        onClick: () => {
+          const purchaseDetails = {
+            id: orderId,
+            date: new Date().toLocaleString(),
+            items: cartItems.map(item => ({
+              id: item.id,
+              name: item.name,
+              price: item.price,
+              quantity: item.quantity
+            })),
+            totalPrice: finalAmount.toFixed(2),
+            orderId,
+            email: customerEmail,
+          };
 
-    // Dispatch order
-    dispatch(addOrder(purchaseDetails));
+          // Save order in Redux + localStorage
+          dispatch(addOrder(purchaseDetails));
+          const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+          if (loggedUser) {
+            if (!loggedUser.orders) loggedUser.orders = [];
+            loggedUser.orders.push(purchaseDetails);
+            localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
+          }
 
-    // Success toast
-    toast.success(`✅ Order ${orderId} has been placed successfully!`, {
-      position: "top-center",
-      autoClose: 3000,
-    });
+          // ✅ EmailJS send call here
+          const templateParams = {
+            order_id: orderId,
+            customer_email: customerEmail,
+            items: cartItems.map(
+              item => `${item.name} × ${item.quantity} = ₹${item.price * item.quantity}`
+            ).join("\n"),
+            total: finalAmount.toFixed(2),
+            message: `Thank you for ordering with Sindhu Restaurant! Your order ${orderId} has been placed successfully.`
+          };
 
-    // Clear cart + navigate
-    dispatch(clearCart());
-    navigate("/");
-  };
+
+          toast.success(`✅ Order ${orderId} placed successfully!`, {
+            position: "top-right",
+            autoClose: 3000,
+          });
+
+          dispatch(clearCart());
+          navigate("/orders");
+        }
+      },
+      {
+        label: "No",
+        onClick: () => toast.info("Order cancelled")
+      }
+    ]
+  });
+};
 
   return (
     <div className="checkout-page">
       <div className="checkout-container">
-        {/* Toast container */}
-        <ToastContainer position="top-center" autoClose={3000} />
-
         <h1 className="checkout-title">🧾 Secure Checkout</h1>
 
         {/* Order Summary */}
@@ -84,16 +112,29 @@ function Checkout() {
         <div className="payment-section">
           <h2>Select Payment Method</h2>
           <div className="payment-buttons">
-            <button
-              onClick={() => setPaymentMethod("qr")}
-              className="pay-btn"
-            >
-              📱 QR Payment
-            </button>
-            <button
-              onClick={() => setPaymentMethod("card")}
-              className="pay-btn"
-            >
+           <button
+  onClick={() =>
+    confirmAlert({
+      title: "Confirm Payment",
+      message: `Are you sure you want to proceed with QR payment for order ${orderId}?`,
+      buttons: [
+        {
+          label: "Yes",
+          onClick: () => setPaymentMethod("qr")
+        },
+        {
+          label: "No",
+          onClick: () => toast.info("QR payment cancelled")
+        }
+      ]
+    })
+  }
+  className="pay-btn"
+>
+  📱 QR Payment
+</button>
+
+            <button onClick={() => setPaymentMethod("card")} className="pay-btn">
               💳 Card Payment
             </button>
           </div>

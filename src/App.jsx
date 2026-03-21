@@ -13,39 +13,48 @@ import Profile from "./Profile";
 import Navbar from "./Navbar";
 // import BlogPost from "./BlogPost";
 
-import { BrowserRouter, NavLink, Route, Routes, Navigate, useNavigate } from "react-router-dom";
-import { useSelector } from "react-redux";
+import { BrowserRouter, Route, Routes, Navigate } from "react-router-dom";
+//import { useSelector } from "react-redux";
 import "./App.css";
 import "react-toastify/dist/ReactToastify.css";
 import Orders from "./Orders";
 import Register from "./Register";
 import Checkout from "./Checkout";
 import ContactUs from "./ContactUs";
-import { ToastContainer, toast } from "react-toastify";
+import { ToastContainer } from "react-toastify";
 
 
 function App() {
 
-  const items = useSelector((globalState) => globalState.cart);
-  let totalQuantity = items.reduce(
-    (total, item) => total + item.quantity,
-    0
-  );
+//   const items = useSelector((globalState) => globalState.cart);
+//   let totalQuantity = items.reduce(
+//     (total, item) => total + item.quantity,
+//     0
+//   );
 
   
-const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
+//     const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
 
-const handleLogout = () => {
-  localStorage.removeItem("loggedUser");
-  toast.success("Logged out successfully"); // 👈 toast instead of alert
-    window.location.href = "/login";
-};
+//     const handleLogout = () => {
+//   localStorage.removeItem("loggedUser");
+//   toast.success("Logged out successfully"); // 👈 toast instead of alert
+//     window.location.href = "/login";
+// };
 
   return (
     <BrowserRouter>
 
 <Navbar/>
-      <ToastContainer position="top-right" autoClose={3000} /> {/* 👈 add this */}
+      <ToastContainer position="top-right" 
+      autoClose={2000}   
+      hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="colored"
+      /> {/* 👈 add this */}
 <div className="page-content">
 <Routes>
 
@@ -68,6 +77,7 @@ const handleLogout = () => {
 <Route path="*" element={<NotFound />} />
 
 </Routes>
+      <ToastContainer position="top-right" autoClose={2000} />
 </div>
 
 </BrowserRouter>

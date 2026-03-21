@@ -119,3 +119,37 @@ h1 {
     width: 100%;
   }
 }
+
+/* ============================= */
+/* FILTER BUTTONS - Elegant Style */
+/* ============================= */
+
+.filter-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;              /* spacing between buttons */
+  margin: 20px 0;
+}
+
+.filter-buttons button {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #ff7043, #ff5722);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+.filter-buttons button:hover {
+  background: linear-gradient(135deg, #ff5722, #e64a19);
+  transform: translateY(-2px);
+}
+
+.filter-buttons button.active {
+  background: #4caf50; /* highlight selected filter */
+  color: #fff;
+}
