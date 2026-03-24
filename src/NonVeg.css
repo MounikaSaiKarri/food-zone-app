@@ -153,3 +153,52 @@ h1 {
   background: #4caf50; /* highlight selected filter */
   color: #fff;
 }
+
+.action-buttons {
+  display: flex;
+  width: 100%;
+  margin-top: 8px;
+  gap: 8px;
+}
+
+/* 75% width */
+.order-btn {
+  flex: 3;
+  padding: 8px;
+  background: #ff5722;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+/* 25% width */
+.fav-btn {
+  flex: 1;
+
+  border: 1px solid #ff5722;
+  border-radius: 6px;   /* 🔥 BOX style (not circle) */
+
+  background: #fff;
+  color: #ff5722;
+
+  font-size: 18px;
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: 0.3s ease;
+}
+
+/* Active state */
+.fav-btn.active {
+  background: #ff5722;
+  color: #fff;
+}
+
+/* Hover */
+.fav-btn:hover {
+  background: #ffe0d5;
+}

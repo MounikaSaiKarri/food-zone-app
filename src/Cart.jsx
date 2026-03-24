@@ -36,7 +36,7 @@ function Cart() {
   useEffect(() => {
     const loggedUser = JSON.parse(localStorage.getItem("loggedUser"));
     if (loggedUser) {
-      setCustomerEmail(loggedUser.email); // auto-fill email if logged in
+      setCustomerEmail(loggedUser.email);
     }
   }, []);
 
@@ -76,7 +76,6 @@ function Cart() {
       email: customerEmail,
     };
 
-    // Save order in localStorage
     if (!loggedUser.orders) loggedUser.orders = [];
     loggedUser.orders.push({
       id: orderId,
@@ -87,13 +86,11 @@ function Cart() {
     });
     localStorage.setItem("loggedUser", JSON.stringify(loggedUser));
 
-    // Send email
     emailjs
       .send("service_51t75ub", "template_yesfx9a", templateParams, "EQ7h92Oh4-oLx3dIw")
       .then(() => toast.success("✨ Email sent successfully!"))
       .catch(() => toast.error("Email failed"));
 
-    // Navigate to checkout page
     navigate("/checkout", {
       state: { cartItems, finalAmount, customerEmail, orderId },
     });
@@ -110,16 +107,16 @@ function Cart() {
 
   return (
     <div className="cart-container">
-      <h1 className="cart-title">🛒 Your Cart</h1>
+      {/* Header */}
+      <div className="cart-header">
+        {cartItems.length > 0 && (
+          <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
+            🗑 Clear Cart
+          </button>
+        )}
+      </div>
 
-      {cartItems.length > 0 && (
-        <button className="clear-cart-btn" onClick={() => dispatch(clearCart())}>
-          🗑 Clear Cart
-        </button>
-      )}
-
-      <br/>
-
+      {/* Empty Cart */}
       {cartItems.length === 0 && (
         <div className="empty-cart">
           <h2>Your Cart is Empty</h2>
@@ -127,93 +124,93 @@ function Cart() {
         </div>
       )}
 
-      {cartItems.length > 0 &&
-        cartItems.map((item, index) => (
-          <div key={item.id + "-" + index} className="cart-item">
-            <img src={item.imageLoc} alt={item.name} />
-            <div className="item-details">
-              <h3>{item.name}</h3>
-              <p>₹{item.price}</p>
-              <p>Qty: {item.quantity}</p>
-            </div>
-           <div className="cart-btns">
-  {/* Increase Quantity */}
-  <button onClick={() => dispatch(increaseQuant(item))}>+</button>
-
-  {/* Decrease Quantity */}
-  <button onClick={() => dispatch(decreaseQuant(item))}>-</button>
-
-  {/* Remove Item */}
-  <button onClick={() => dispatch(removeCart(item))}>Remove</button>
-</div>
-
-          </div>
-        ))}
-
+      {/* Two-column layout */}
       {cartItems.length > 0 && (
-        <>
-          <div className="total-box">
-            <div className="price-row">
-              <span>Total Amount</span>
-              <span>₹{totalAmount.toFixed(2)}</span>
-            </div>
-            {discountPer > 0 && (
-              <div className="price-row">
-                <span>Discount</span>
-                <span>- ₹{discountAmount.toFixed(2)}</span>
+        <div className="cart-page">
+          {/* LEFT SIDE: Items */}
+          <div className="cart-left">
+            {cartItems.map((item, index) => (
+              <div key={item.id + "-" + index} className="cart-item">
+                <img src={item.imageLoc} alt={item.name} />
+                <div className="item-details">
+                  <h3>{item.name}</h3>
+                  <p>₹{item.price}</p>
+                  <p>Qty: {item.quantity}</p>
+                </div>
+                <div className="cart-btns">
+                  <button onClick={() => dispatch(increaseQuant(item))}>+</button>
+                  <button onClick={() => dispatch(decreaseQuant(item))}>-</button>
+                  <button onClick={() => dispatch(removeCart(item))}>Remove</button>
+                </div>
               </div>
-            )}
-            {applied && (
-              <div className="price-row">
-                <span>Coupon</span>
-                <span>- ₹{couponDiscount.toFixed(2)}</span>
-              </div>
-            )}
-            <hr />
-            <div className="final-price">
-              <span>Final Amount</span>
-              <span>₹{finalAmount.toFixed(2)}</span>
-            </div>
+            ))}
           </div>
 
-          {totalAmount > 1000 && (
-            <div className="discount-box">
-              <h3>Special Discount</h3>
-              <button onClick={() => setDiscountPer(10)}>10%</button>
-              <button onClick={() => setDiscountPer(20)}>20%</button>
-              <button onClick={() => setDiscountPer(30)}>30%</button>
-              <button onClick={() => setDiscountPer(0)}>Reset</button>
+          {/* RIGHT SIDE: Checkout */}
+          <div className="cart-right">
+            <div className="total-box">
+              <div className="price-row">
+                <span>Total Amount</span>
+                <span>₹{totalAmount.toFixed(2)}</span>
+              </div>
+              {discountPer > 0 && (
+                <div className="price-row">
+                  <span>Discount</span>
+                  <span>- ₹{discountAmount.toFixed(2)}</span>
+                </div>
+              )}
+              {applied && (
+                <div className="price-row">
+                  <span>Coupon</span>
+                  <span>- ₹{couponDiscount.toFixed(2)}</span>
+                </div>
+              )}
+              <hr />
+              <div className="final-price">
+                <span>Final Amount</span>
+                <span>₹{finalAmount.toFixed(2)}</span>
+              </div>
             </div>
-          )}
 
-          {totalAmount > 1000 && (
-            <div className="coupon-box">
-              <input
-                type="text"
-                placeholder="Enter Coupon Code"
-                value={input}
-                onChange={(e) => setInput(e.target.value)}
-              />
-              <button onClick={handleApplyCoupon}>Apply</button>
-              <button onClick={() => dispatch(resetCoupon())}>Reset</button>
-            </div>
-          )}
+            {totalAmount > 1000 && (
+              <div className="discount-box">
+                <h3>Special Discount</h3>
+                <button onClick={() => setDiscountPer(10)}>10%</button>
+                <button onClick={() => setDiscountPer(20)}>20%</button>
+                <button onClick={() => setDiscountPer(30)}>30%</button>
+                <button onClick={() => setDiscountPer(0)}>Reset</button>
+              </div>
+            )}
 
-          {!customerEmail && (
-            <div className="email-box">
-              <label>Enter email for order confirmation</label>
-              <input
-                type="email"
-                value={customerEmail}
-                onChange={(e) => setCustomerEmail(e.target.value)}
-              />
-            </div>
-          )}
+            {totalAmount > 1000 && (
+              <div className="coupon-box">
+                <input
+                  type="text"
+                  placeholder="Enter Coupon Code"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                />
+                <button onClick={handleApplyCoupon}>Apply</button>
+                <button onClick={() => dispatch(resetCoupon())}>Reset</button>
+              </div>
+            )}
 
-          <button onClick={handleCheckout} className="checkout-btn">
-            Proceed to Pay
-          </button>
-        </>
+            {!customerEmail && (
+              <div className="email-box">
+                <label>Enter email for order confirmation</label>
+                <input
+                  type="email"
+                  value={customerEmail}
+                  onChange={(e) => setCustomerEmail(e.target.value)}
+                />
+              </div>
+            )}
+
+            <button onClick={handleCheckout} className="checkout-btn">
+              Proceed to Pay
+            </button>
+          </div>
+        </div>
       )}
     </div>
   );

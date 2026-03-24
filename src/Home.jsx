@@ -83,7 +83,7 @@ function Home() {
 
       {/* ===== FEATURED DISHES ===== */}
       <section className="featured">
-        <h2>Restaurant Favorites</h2>
+        <h2>Restaurant's Famous & Special Dishes</h2>
 
         <div className="cards">
           <div className="card">

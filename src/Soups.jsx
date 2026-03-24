@@ -183,24 +183,26 @@ imageLoc:"/image/veg.jpg"
               <p>{item.description}</p>
               <h4 className="price">₹{item.price}</h4>
 
-              <button className="order-btn" onClick={() => {dispatch(addToCart(item)); toast.success(`${item.name} added to cart`);}}>
-                Add To Cart
-              </button>
+              <div className="action-buttons">
 
-              <button
-                style={{
-                  marginTop: "8px",
-                  padding: "6px 12px",
-                  border: "1px solid #ff5722",
-                  borderRadius: "6px",
-                  background: favorites.includes(item.name) ? "#ff5722" : "#fff",
-                  color: favorites.includes(item.name) ? "#fff" : "#333",
-                  cursor: "pointer"
-                }}
-                onClick={() => handleFavorite(item.name)}
-              >
-                {favorites.includes(item.name) ? "★ Favorited" : "☆ Add Favorite"}
-              </button>
+                  <button
+                    className="order-btn"
+                    onClick={() => {
+                      dispatch(addToCart(item));
+                      toast.success(`${item.name} added to cart`);
+                    }}
+                  >
+                    Add To Cart
+                  </button>
+
+                  <button
+                    className={`fav-btn ${favorites.includes(item.name) ? "active" : ""}`}
+                    onClick={() => handleFavorite(item.name)}
+                  >
+                    {favorites.includes(item.name) ? "★" : "☆"}
+                  </button>
+
+                </div>
             </div>
           </div>
         ))}
